@@ -6,9 +6,6 @@ import Control.Isomorphism
 
 %default total
 
-absurd : Uninhabited t => t -> a
-absurd t = FalseElim (uninhabited t)
-
 to : Iso a b -> a -> b
 to (MkIso to from toFrom fromTo) = to
 
@@ -59,4 +56,17 @@ instance Finite Bool 2 where
           ok2 False = refl
           ok2 True = refl
 
+-- Isomorphisms over Maybe
+maybeVoidUnit2 : Iso (Maybe _|_) ()
+maybeVoidUnit2 = MkIso to from iso1 iso2
+  where to : Maybe _|_ -> ()
+        to Nothing = ()
+        to (Just x) = FalseElim x
+        from : () -> Maybe _|_
+        from () = Nothing
+        iso1 : (x : ()) -> to (from x) = x
+        iso1 () = refl
+        iso2 : (y : Maybe _|_) -> from (to y) = y
+        iso2 Nothing = refl
+        iso2 (Just x) = FalseElim x
 
