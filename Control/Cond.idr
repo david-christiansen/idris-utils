@@ -23,19 +23,19 @@ foo x = cond $ do
 
 infix 0 ?:
 
-data Alt a = Unmatched | Matched a
+data Alt a = Unmatched | Matched (Lazy a)
 
-data Res a = It a
+data Res a = It (Lazy a)
 
 (>>=) : Alt a -> (() -> Res a) -> Res a
 (>>=) Unmatched f = f ()
 (>>=) (Matched x) f = It x
 
-(?:) : Bool -> |(expr : a) -> Alt a
+(?:) : Bool -> Lazy a -> Alt a
 (?:) False x = Unmatched
 (?:) True x = Matched x
 
-otherwise : a -> Res a
+otherwise : Lazy a -> Res a
 otherwise x = It x
 
 cond : Res a -> a
