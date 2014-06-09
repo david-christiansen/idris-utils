@@ -1,6 +1,5 @@
 module Types.Finite
 
-import Uninhabited
 import Control.Isomorphism
 
 
