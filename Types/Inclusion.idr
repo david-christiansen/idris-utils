@@ -14,7 +14,7 @@ data Inclusion : (a, b : Type) -> Type where
             Inclusion a b
 
 includeRefl : Inclusion a a
-includeRefl = Include id Just (\x => refl) (\y => refl)
+includeRefl = Include id Just (\x => Refl) (\y => Refl)
 
 
 includeTrans : Inclusion a b -> Inclusion b c -> Inclusion a c
@@ -26,7 +26,7 @@ includeTrans {a} {b} {c} (Include u d ud du) (Include u' d' ud' du') =
 
     where ok1 : (x : a) -> (d' (u' (u x))) >>= d = Just x
           ok1 x = ((d' (u' (u x))) >>= d) ={ cong {f=(>>= d)} (ud' (u x)) }=
-                  ((Just (u x)) >>= d)    ={ refl }=
+                  ((Just (u x)) >>= d)    ={ Refl }=
                   (d (u x))               ={ ud x }=
                   (Just x)                QED
 
@@ -57,9 +57,9 @@ includeIso : Iso a b -> Inclusion a b
 includeIso {a} {b} (MkIso to from toFrom fromTo) =
   Include to (\x => Just (from x)) ok1 ok2
     where ok1 : (x : a) -> (Just (from (to x)) = Just x)
-          ok1 x = rewrite fromTo x in refl -- workaround for de Bruijn index bug
+          ok1 x = rewrite fromTo x in Refl -- workaround for de Bruijn index bug
           ok2 : (y : b) -> to (from y) = y
-          ok2 y = rewrite toFrom y in refl -- workaround for de Bruijn index bug
+          ok2 y = rewrite toFrom y in Refl -- workaround for de Bruijn index bug
 
 castUp : Inclusion a b -> a -> b
 castUp (Include up _ _ _) = up

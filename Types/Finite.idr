@@ -1,5 +1,6 @@
 module Types.Finite
 
+import Data.Fin
 import Control.Isomorphism
 
 
@@ -28,15 +29,15 @@ fromFin = from isFinite
 instance Finite () 1 where
   isFinite = MkIso to from ok1 ok2
     where to : () -> Fin 1
-          to () = fZ
+          to () = FZ
           from : Fin 1 -> ()
-          from fZ     = ()
-          from (fS f) = absurd f
+          from FZ     = ()
+          from (FS f) = absurd f
           ok2 : (x : ()) -> from (to x) = x
-          ok2 () = refl
+          ok2 () = Refl
           ok1 : (x : Fin 1) -> to (from x) = x
-          ok1 fZ     = refl
-          ok1 (fS f) = absurd f
+          ok1 FZ     = Refl
+          ok1 (FS f) = absurd f
 
 instance Finite Bool 2 where
   isFinite = MkIso to from ok1 ok2
@@ -44,28 +45,28 @@ instance Finite Bool 2 where
           to False = 0
           to True  = 1
           from : Fin 2 -> Bool
-          from fZ = False
-          from (fS fZ) = True
-          from (fS (fS x)) = FalseElim (uninhabited x)
+          from FZ = False
+          from (FS FZ) = True
+          from (FS (FS x)) = absurd x 
           ok1 : (f : Fin 2) -> to (from f) = f
-          ok1 fZ = refl
-          ok1 (fS fZ) = refl
-          ok1 (fS (fS x)) = FalseElim (uninhabited x)
+          ok1 FZ = Refl
+          ok1 (FS FZ) = Refl
+          ok1 (FS (FS x)) = absurd x 
           ok2 : (b : Bool) -> from (to b) = b
-          ok2 False = refl
-          ok2 True = refl
+          ok2 False = Refl
+          ok2 True = Refl
 
 -- Isomorphisms over Maybe
-maybeVoidUnit2 : Iso (Maybe _|_) ()
+maybeVoidUnit2 : Iso (Maybe Void) ()
 maybeVoidUnit2 = MkIso to from iso1 iso2
-  where to : Maybe _|_ -> ()
+  where to : Maybe Void -> ()
         to Nothing = ()
-        to (Just x) = FalseElim x
-        from : () -> Maybe _|_
+        to (Just x) = absurd x
+        from : () -> Maybe Void
         from () = Nothing
         iso1 : (x : ()) -> to (from x) = x
-        iso1 () = refl
-        iso2 : (y : Maybe _|_) -> from (to y) = y
-        iso2 Nothing = refl
-        iso2 (Just x) = FalseElim x
+        iso1 () = Refl
+        iso2 : (y : Maybe Void) -> from (to y) = y
+        iso2 Nothing = Refl
+        iso2 (Just x) = absurd x
 
